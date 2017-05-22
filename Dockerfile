@@ -60,7 +60,7 @@ RUN cd /usr/local/composer \
 
 RUN curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.1/install.sh | NVM_DIR=/usr/local/nvm bash \
  && echo 'export NVM_DIR="/usr/local/nvm"' >> /home/gitlab_ci_multi_runner/.bashrc \
- && echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" \
+ && echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm' >> /home/gitlab_ci_multi_runner/.bashrc
  && mkdir -p /usr/local/nvm/.cache \
  && chmod -R 777 /usr/local/nvm/.cache
 
