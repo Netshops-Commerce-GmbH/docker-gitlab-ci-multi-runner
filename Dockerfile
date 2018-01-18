@@ -70,9 +70,8 @@ RUN curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.1/install.sh
     && echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm' >> /home/gitlab_ci_multi_runner/.bashrc \
     && mkdir -p /usr/local/nvm \
     && chmod -R 777 /usr/local/nvm \
-    && su ${GITLAB_CI_MULTI_RUNNER_USER} -c "nvm install lts/*" \
-    && su ${GITLAB_CI_MULTI_RUNNER_USER} -c "nvm install 0.10.41" \
-    && su ${GITLAB_CI_MULTI_RUNNER_USER} -c "nvm alias default lts/*"
+    ## TODO: doesn't work. Need to optimize!
+    && su ${GITLAB_CI_MULTI_RUNNER_USER} -c "/usr/local/nvm/nvm.sh install lts/* && /usr/local/nvm/nvm.sh install 0.10.41 && /usr/local/nvm/nvm.sh alias default lts/*"
 
 RUN ln -s /usr/bin/nodejs /usr/bin/node
 
