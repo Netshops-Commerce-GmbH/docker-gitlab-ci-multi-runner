@@ -35,6 +35,7 @@ RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv E1DD270288B4E60
         grunt-cli \
         bower \
         foundation \
+        psi \
 
     && gem install compass \
 
@@ -66,7 +67,10 @@ RUN curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.1/install.sh
     && echo 'export NVM_DIR="/usr/local/nvm"' >> /home/gitlab_ci_multi_runner/.bashrc \
     && echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm' >> /home/gitlab_ci_multi_runner/.bashrc \
     && mkdir -p /usr/local/nvm \
-    && chmod -R 777 /usr/local/nvm
+    && chmod -R 777 /usr/local/nvm \
+    && su ${GITLAB_CI_MULTI_RUNNER_USER} -c "nvm install lts/*" \
+    && su ${GITLAB_CI_MULTI_RUNNER_USER} -c "nvm install 0.10.41" \
+    && su ${GITLAB_CI_MULTI_RUNNER_USER} -c "nvm alias default lts/*"
 
 RUN ln -s /usr/bin/nodejs /usr/bin/node
 
