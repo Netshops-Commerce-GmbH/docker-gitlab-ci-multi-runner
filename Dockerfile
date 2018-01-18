@@ -31,7 +31,6 @@ RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv E1DD270288B4E60
         ruby-dev \
         rsync \
         nano \
-        vi \
         vim \
 
     && npm install -g \
