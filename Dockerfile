@@ -1,47 +1,40 @@
-FROM ubuntu:16.04
-MAINTAINER sameer@damagehead.com
+FROM ubuntu:19.04
+MAINTAINER benjamin,schnoor@etribes.de
 
-ENV GITLAB_CI_MULTI_RUNNER_VERSION=10.4.0 \
+ENV GITLAB_CI_MULTI_RUNNER_VERSION=11.6.0 \
     GITLAB_CI_MULTI_RUNNER_USER=gitlab_ci_multi_runner \
-    GITLAB_CI_MULTI_RUNNER_HOME_DIR="/home/gitlab_ci_multi_runner"
-ENV GITLAB_CI_MULTI_RUNNER_DATA_DIR="${GITLAB_CI_MULTI_RUNNER_HOME_DIR}/data"
+    GITLAB_CI_MULTI_RUNNER_HOME_DIR="/home/gitlab_ci_multi_runner" \
+    GITLAB_CI_MULTI_RUNNER_DATA_DIR="${GITLAB_CI_MULTI_RUNNER_HOME_DIR}/data" \
+    DEBIAN_FRONTEND=noninteractive
 
-RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv E1DD270288B4E6030699E45FA1715D88E1DF1F24 \
-    && echo "deb http://ppa.launchpad.net/git-core/ppa/ubuntu trusty main" >> /etc/apt/sources.list \
-    && apt-get update \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -y \
+RUN apt-get update \
+    && apt-get install -y \
         git-core openssh-client curl libapparmor1 wget zip sudo \
-        php \
-        php7.0-cli \
-        php7.0-json \
-        php7.0-common \
-        php7.0-xml \
-        php7.0-gd \
-        php7.0-curl \
-        php7.0-mbstring \
-        php7.0-mcrypt \
-        php7.0-zip \
-        php7.0-mysql \
+        php7.2 \
+        php7.2-cli \
+        php7.2-json \
+        php7.2-common \
+        php7.2-xml \
+        php7.2-gd \
+        php7.2-curl \
+        php7.2-mbstring \
+        php7.2-zip \
+        php7.2-mysql \
         npm \
         ttfautohint \
         fontforge \
         jpegoptim \
         optipng \
-        ruby \
-        ruby-dev \
         rsync \
         nano \
-        vim \
+        vim
 
-    && npm install -g \
+RUN npm install -g \
         grunt-cli \
-        bower \
         foundation \
-        psi \
+        psi
 
-    && gem install compass \
-
-    && wget -q -O /usr/local/bin/gitlab-ci-multi-runner \
+RUN wget -q -O /usr/local/bin/gitlab-ci-multi-runner \
         https://gitlab-runner-downloads.s3.amazonaws.com/v${GITLAB_CI_MULTI_RUNNER_VERSION}/binaries/gitlab-runner-linux-amd64 \
     && chmod 0755 /usr/local/bin/gitlab-ci-multi-runner \
     && adduser --disabled-login --gecos 'GitLab CI Runner' ${GITLAB_CI_MULTI_RUNNER_USER} \
@@ -62,7 +55,7 @@ RUN cd /usr/local/composer \
     && mkdir -p /usr/local/composer/vendor \
     && chown ${GITLAB_CI_MULTI_RUNNER_USER}:${GITLAB_CI_MULTI_RUNNER_USER} /usr/local/composer \
     && chmod -R 777 /usr/local/composer \
-    && su ${GITLAB_CI_MULTI_RUNNER_USER} -c "composer install" \
+    && su ${GITLAB_CI_MULTI_RUNNER_USER} -c "composer install --dev" \
     && for f in $(ls -d /usr/local/composer/vendor/bin/*); do ln -s $f /usr/local/bin; done
 
 RUN curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.1/install.sh | NVM_DIR=/usr/local/nvm bash \
@@ -73,9 +66,7 @@ RUN curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.1/install.sh
     ## TODO: doesn't work. Need to optimize!
     && su ${GITLAB_CI_MULTI_RUNNER_USER} -c "/usr/local/nvm/nvm.sh install lts/* && /usr/local/nvm/nvm.sh install 0.10.41 && /usr/local/nvm/nvm.sh alias default lts/*"
 
-RUN ln -s /usr/bin/nodejs /usr/bin/node
-
-COPY php/php.ini /etc/php/7.0/cli/php.ini
+COPY php/php.ini /etc/php/7.2/cli/php.ini
 
 VOLUME ["${GITLAB_CI_MULTI_RUNNER_DATA_DIR}"]
 WORKDIR "${GITLAB_CI_MULTI_RUNNER_HOME_DIR}"
